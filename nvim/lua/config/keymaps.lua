@@ -10,7 +10,7 @@ vim.keymap.set("n", "<F5>", function()
     -- 2. SET YOUR TERMINAL HERE
     -- Common options: "alacritty", "konsole", "kitty", "gnome-terminal", "wezterm"
     -- CachyOS usually defaults to "alacritty"
-    local term = "ghostty"
+    local term = "alacritty"
 
     -- 3. Get file info
     -- local file = vim.fn.expand("%:t")
@@ -54,7 +54,7 @@ vim.keymap.set("n", "<F6>", function()
     -- 2. SET YOUR TERMINAL HERE
     -- Common options: "alacritty", "konsole", "kitty", "gnome-terminal", "wezterm"
     -- CachyOS usually defaults to "alacritty"
-    local term = "ghostty"
+    local term = "alacritty"
 
     -- 3. Get file info
     local file = vim.fn.expand("%:p")
@@ -77,6 +77,41 @@ vim.keymap.set("n", "<F6>", function()
     vim.fn.jobstart(final_cmd, { detach = true })
 end, { desc = "Run Python (Linux)" })
 ------------------------------------------------------------------------
+
+------------------------
+--------- Go -----------
+------------------------
+
+-- Run Go in a separate Linux Terminal
+vim.keymap.set("n", "<F7>", function()
+    -- 1. Save the file
+    vim.cmd("w")
+
+    -- 2. SET YOUR TERMINAL HERE
+    -- CachyOS usually defaults to "alacritty"
+    local term = "alacritty"
+
+    -- 3. Get file info
+    local file = vim.fn.expand("%:p")
+
+    -- 4. Create the bash command
+    --    go run executes the file immediately
+    --    ; read ... pauses the window so it doesn't close
+    local bash_cmd = string.format("go run '%s'; echo ''; echo 'Press Enter to close...'; read", file)
+
+    -- 5. Execute based on the terminal
+    local final_cmd = string.format('%s -e bash -c "%s"', term, bash_cmd)
+
+    -- Special case for Kitty
+    if term == "kitty" then
+        final_cmd = string.format('kitty bash -c "%s"', bash_cmd)
+    end
+
+    -- 6. Run the command detached
+    vim.fn.jobstart(final_cmd, { detach = true })
+end, { desc = "Run Go (Linux)" })
+
+-----------------------------------------------------------------------------
 
 -- Toggleterm open in the working directory
 vim.keymap.set("n", "<C-\\>", ":ToggleTerm dir=%:p:h<CR>", { noremap = true, silent = true })
